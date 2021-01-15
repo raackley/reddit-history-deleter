@@ -9,8 +9,10 @@ client_id = os.environ['RHD_CLIENT_ID']
 client_secret = os.environ['RHD_CLIENT_SECRET']
 
 # Get age threshold from environment and convert to seconds
-expiration_days = os.environ.get('RHD_EXPIRATION_DAYS', 365) # input age threshold in days, default to a year (365)
-expiration_seconds = int(expiration_days) * 60 * 60 * 24  # convert days to seconds
+# input age threshold in days, default to a year (365)
+expiration_days = os.environ.get('RHD_EXPIRATION_DAYS', 365)
+# convert days to seconds
+expiration_seconds = int(expiration_days) * 60 * 60 * 24
 
 # calculate age threshold in UNIX_TIME
 time_now = time.time()
@@ -25,5 +27,6 @@ reddit = praw.Reddit(client_id=client_id,
 
 # Find all comments for user
 for comment in reddit.redditor(username).comments.new(limit=None):
+    # If the created date is less than the threshold, delete it
     if comment.created_utc < time_threshold:
-        comment.delete() # If the created date is less than the threshold, delete it
+        comment.delete()

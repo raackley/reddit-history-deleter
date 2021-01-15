@@ -1,0 +1,12 @@
+stages:
+  - test
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+flake8:
+  stage: test
+  image: raackley/gitlab-runner
+  script: flake8
+  tags: ["docker"]
