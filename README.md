@@ -12,6 +12,11 @@ export RHD_PASSWORD=<Reddit password>
 export RHD_CLIENT_ID=<Reddit app ID>
 export RHD_CLIENT_SECRET=<Reddit app secret>
 ```
+Optional, set the number of days old a Reddit post should be to delete.  Not setting this value will default to 365 days.
+
+```
+export RHD_EXPIRATION_DAYS=<number of days>
+```
 
 The username and password should be self explanatory.  The client ID and secret must be configured as a new application in your Reddit account first, then the values for that app can be used here.
 
@@ -21,10 +26,28 @@ Click the "Create another app..." button.  Enter a name, like `reddit-history-de
 
 Click `create app`.  After the app has been created, use the value under `personal use script` for the app ID in the configuration, and use the value for `secret` for the app secret value.
 
-## Run
+## Run Standalone
 
-You will need Python 3 to run the app after configuring it.  If you have Python 3 installed, you can run it like so:
+You will need Python 3 to run the app after configuring it.  You will also need to install the PRAW library via pip.
+
+```
+$ cd src
+```
+
+```
+$ python -m pip install requirements.txt
+```
 
 ```
 $ python reddit-history-deleter.py
+```
+
+## Run with Docker
+
+```
+docker run --rm -e RHD_USERNAME=$RHD_USERNAME \
+-e RHD_PASSWORD=$RHD_PASSWORD \
+-e RHD_CLIENT_ID=$RHD_CLIENT_ID \
+-e RHD_CLIENT_SECRET=$RHD_CLIENT_SECRET \
+-e RHD_EXPIRATION_DAYS=$RHD_EXPIRATION_DAYS raackley/reddit-history-deleter:latest
 ```
