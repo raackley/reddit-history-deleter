@@ -1,0 +1,8 @@
+#!/bin/sh
+
+docker run --rm -e RHD_USERNAME=$RHD_USERNAME \
+-e RHD_PASSWORD=$RHD_PASSWORD \
+-e RHD_CLIENT_ID=$RHD_CLIENT_ID \
+-e RHD_CLIENT_SECRET=$RHD_CLIENT_SECRET \
+-e RHD_EXPIRATION_DAYS=$RHD_EXPIRATION_DAYS \
+raackley/reddit-history-deleter:latest

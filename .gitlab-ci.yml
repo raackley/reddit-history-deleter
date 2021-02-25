@@ -4,6 +4,7 @@ variables:
 stages:
   - build
   - test
+  - run
 
 include:
   - template: Security/SAST.gitlab-ci.yml
@@ -22,9 +23,56 @@ build:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker build -t $IMAGE .
     - docker push $IMAGE
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  tags: ["gitlab-org-docker"]
 
 flake8:
   stage: test
   image: raackley/gitlab-runner
   script: flake8
-  tags: ["docker"]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  tags: ["gitlab-org-docker"]
+
+bandit-sast:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+container_scanning:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+secret_detection_default_branch:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+secret_detection:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+delete-history-scheduled:
+  image: docker:stable
+  stage: run
+  services:
+    - docker:dind
+  script: ./docker_run.sh
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  tags: ["gitlab-org-docker"]
