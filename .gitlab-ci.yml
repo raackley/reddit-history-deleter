@@ -67,7 +67,7 @@ secret_detection:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
-delete-history-scheduled:
+.delete-history: &delete-history
   image: docker:stable
   stage: run
   services:
@@ -75,4 +75,21 @@ delete-history-scheduled:
   script: ./docker_run.sh
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
   tags: ["gitlab-org-docker"]
+
+delete-history-scheduled:
+  <<: *delete-history
+  environment:
+    name: scheduled
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+
+delete-history-cicd:
+  <<: *delete-history
+  environment:
+    name: cicd
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
