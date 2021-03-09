@@ -19,14 +19,27 @@ time_now = time.time()
 time_threshold = time_now - expiration_seconds
 
 # Log in to Reddit
-reddit = praw.Reddit(client_id=client_id,
-                     client_secret=client_secret,
-                     password=password,
-                     user_agent="Python PRAW",
-                     username=username)
+try:
+    reddit = praw.Reddit(client_id=client_id,
+                         client_secret=client_secret,
+                         password=password,
+                         user_agent="Python PRAW",
+                         username=username)
+    print("Logged in as: ", reddit.user.me())
+except Exception:
+    print("ERROR: Could not log in.")
+    exit(1)
 
 # Find all comments for user
 for comment in reddit.redditor(username).comments.new(limit=None):
     # If the created date is less than the threshold, delete it
     if comment.created_utc < time_threshold:
         comment.delete()
+        print("Deleted comment.")
+
+# Find all submissions for user
+for submission in reddit.redditor(username).submissions.new(limit=None):
+    # If the created date is less than the threshold, delete it
+    if submission.created_utc < time_threshold:
+        submission.delete()
+        print("Deleted submission.")

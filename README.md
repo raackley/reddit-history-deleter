@@ -1,6 +1,6 @@
 # Reddit history deleter
 
-This script deletes your user's Reddit comments if they are older than a certain number of days.  If you do not specify an age threshold, then the default value is set to 365 days.
+This script deletes your user's Reddit comments and submissions if they are older than a certain number of days.  If you do not specify an age threshold, then the default value is set to 365 days.
 
 ## Configuration
 
