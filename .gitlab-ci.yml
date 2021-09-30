@@ -11,24 +11,40 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
   - template: Container-Scanning.gitlab-ci.yml
 
-build:
+.build:
   image: docker:stable
   stage: build
   services:
     - docker:dind
-  variables:
-    IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   script:
     - docker info
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" $CI_REGISTRY
     - docker build -t $IMAGE .
     - docker push $IMAGE
+  tags: ["gitlab-org-docker"]
+
+build:
+  extends: .build
+  variables:
+    IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+    DOCKER_USER: $CI_REGISTRY_USER
+    DOCKER_PASSWORD: $CI_REGISTRY_PASSWORD
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "master"'
-  tags: ["gitlab-org-docker"]
+
+build-dockerhub:
+  extends: .build
+  variables:
+    IMAGE: raackley/reddit-history-deleter:latest
+    DOCKER_USER: "raackley"
+    DOCKER_PASSWORD: "$DOCKERHUB_TOKEN"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 flake8:
   stage: test
