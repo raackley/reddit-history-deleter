@@ -19,8 +19,10 @@ include:
   script:
     - docker info
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
-    - docker build -t $IMAGE .
+    - docker build -t reddit-history-deleter .
+    - docker tag reddit-history-deleter $IMAGE
     - docker push $IMAGE
+    - docker logout
   tags: ["gitlab-org-docker"]
 
 build:
@@ -42,7 +44,7 @@ build-dockerhub:
     IMAGE: raackley/reddit-history-deleter:latest
     DOCKER_USER: "raackley"
     DOCKER_PASSWORD: "$DOCKERHUB_TOKEN"
-    DOCKER_REGISTRY: "registry.hub.docker.com"
+    DOCKER_REGISTRY: ""
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
