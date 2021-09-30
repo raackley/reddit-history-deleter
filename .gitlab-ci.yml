@@ -22,7 +22,7 @@ include:
     - docker build -t reddit-history-deleter .
     - docker tag reddit-history-deleter $IMAGE
     - docker push $IMAGE
-    - docker logout
+    - docker logout $DOCKER_REGISTRY
   tags: ["gitlab-org-docker"]
 
 build:
