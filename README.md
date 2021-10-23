@@ -1,6 +1,6 @@
 # Reddit history deleter
 
-This script deletes your user's Reddit comments and submissions if they are older than a certain number of days.  If you do not specify an age threshold, then the default value is set to 365 days.
+This script deletes or overwrites your user's Reddit comments and submissions if they are older than a certain number of days.  If you do not specify an age threshold, then the default value is set to 365 days.  The default mode is "delete".
 
 ## Configuration
 
@@ -16,6 +16,18 @@ Optional, set the number of days old a Reddit post should be to delete.  Not set
 
 ```
 export RHD_EXPIRATION_DAYS=<number of days>
+```
+
+Optional, set the mode.  For overwrite mode, set the variable to "overwrite".  For delete mode, set it to "delete", or do not set it.
+
+```
+export RHD_MODE="overwrite"
+```
+
+Optional, when using overwrite mode, you can customize the overwritten message.  The default is "DLETED".
+
+```
+export RHD_OVERWRITE_MESSAGE="<your overwrite message>"
 ```
 
 The username and password should be self explanatory.  The client ID and secret must be configured as a new application in your Reddit account first, then the values for that app can be used here.
@@ -35,7 +47,7 @@ $ cd src
 ```
 
 ```
-$ python -m pip install requirements.txt
+$ python -m pip install -r requirements.txt
 ```
 
 ```
