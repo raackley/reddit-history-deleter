@@ -39,6 +39,7 @@ except Exception:
 
 # Find all comments for user
 for comment in reddit.redditor(username).comments.new(limit=None):
+    time.sleep(1)  # sleep to avoid rate limiting
     # If the created date is less than the threshold, delete it
     if comment.created_utc < time_threshold:
         if (rhd_mode == "delete"):
@@ -50,6 +51,7 @@ for comment in reddit.redditor(username).comments.new(limit=None):
 
 # Find all submissions for user
 for submission in reddit.redditor(username).submissions.new(limit=None):
+    time.sleep(1)  # sleep to avoid rate limiting
     # If the created date is less than the threshold, delete it
     if submission.created_utc < time_threshold:
         if (rhd_mode == "delete"):
