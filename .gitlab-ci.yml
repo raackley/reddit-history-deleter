@@ -12,16 +12,16 @@ include:
   - template: Container-Scanning.gitlab-ci.yml
 
 .build:
-  image: docker:stable
+  image: docker:24.0.6
   stage: build
   services:
-    - docker:dind
+    - name: docker:24.0.6-dind
+      alias: docker
   script:
     - docker info
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
-    - docker build -t reddit-history-deleter .
-    - docker tag reddit-history-deleter $IMAGE
-    - docker push $IMAGE
+    - docker buildx create --use
+    - docker buildx build --platform linux/amd64,linux/arm64 --push -t $IMAGE .
     - docker logout $DOCKER_REGISTRY
   tags: ["gitlab-org-docker"]
 
@@ -83,10 +83,11 @@ secret_detection:
     - if: '$CI_COMMIT_BRANCH == "master"'
 
 .delete-history: &delete-history
-  image: docker:stable
+  image: docker:24.0.6
   stage: run
   services:
-    - docker:dind
+    - name: docker:24.0.6-dind
+      alias: docker
   script: ./docker_run.sh
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
